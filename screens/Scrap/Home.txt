@@ -1,0 +1,156 @@
+import {
+  AspectRatio,
+  Avatar,
+  Box,
+  Button,
+  Center,
+  HStack,
+  Heading,
+  Image,
+  NativeBaseProvider,
+  ScrollView,
+  Stack,
+  Text,
+  VStack
+} from "native-base";
+import { Card, CardAction, CardButton, CardContent, CardImage, CardTitle } from 'react-native-material-cards'
+import React, { Component } from 'react';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { StyleSheet } from 'react-native';
+import { width } from "styled-system";
+
+const Home = ({ navigation }) => {
+  return(
+    <NativeBaseProvider>
+      <ScrollView
+      flex={1}
+      px={2}
+      _contentContainerStyle={{
+        
+        px: "5px",
+        w: "100%",
+      }} // style={{ backgroundColor: 'blue' }}
+      >
+        <VStack space={1} alignItems="center">
+        <Card>
+          <CardImage 
+            source={{uri: 'https://mediaserver.goepson.com/ImConvServlet/imconv/3c9f76054c021c0ce3c1ca970d57bcdb053b5b2f/1200Wx1200H?use=banner&assetDescr=ES-580W_S02_multiple%20paper-1'}} 
+            
+            textStyle={styles.Black}
+          />
+          <CardTitle 
+            title="Product Knowledge - ES-580W " 
+            subtitle="Scanner"
+          />
+          <CardContent text="Epson looks into the details and designs equipment for a seamless workflow, like the innovative WorkForce ES-580W. Paired with the Epson Smart Panel app, users can scan and share documents with their workgroup on their mobile devices, enhancing productivity.
+" />
+          <CardAction 
+            separator={true} 
+            inColumn={false}>
+            <CardButton
+              onPress={() => navigation.navigate('ProductDetail')}
+              title="View"
+              color="blue"
+            />
+
+          </CardAction>
+        </Card>
+        <Card>
+          <CardImage 
+            source={{uri: 'data:image/jpeg;base64,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'}} 
+
+            textStyle={styles.Black}
+          />
+          <CardTitle 
+            title="Sales Kit" 
+            subtitle="All Product"
+          />
+          <CardContent text="This is the page for the sales kit for all products" />
+          <CardAction 
+            separator={true} 
+            inColumn={false}>
+            <CardButton
+              onPress={() => navigation.navigate('SalesKit')}
+              title="View"
+              color="blue"
+            />
+
+          </CardAction>
+        </Card>
+        <Card>
+          <CardImage 
+            source={{uri: 'https://media.istockphoto.com/vectors/english-language-studying-vector-concept-metaphor-vector-id1287413839?b=1&k=6&m=1287413839&s=612x612&w=0&h=idBl7dZj-sR0nPqdGlAwMpqMNM0EiQGk3vB4gH0MvP8='}} 
+
+            textStyle={styles.Black}
+          />
+          <CardTitle 
+            title="Glossary" 
+            subtitle="All Product"
+          />
+          <CardContent text="This is the page for the Glossary for all products" />
+          <CardAction 
+            separator={true} 
+            inColumn={false}>
+            <CardButton
+              onPress={() => navigation.navigate('Glossary')}
+              title="View"
+              color="blue"
+            />
+
+          </CardAction>
+        </Card>
+        <Card>
+          <CardImage 
+            source={{uri: 'https://mediaserver.goepson.com/ImConvServlet/imconv/3c9f76054c021c0ce3c1ca970d57bcdb053b5b2f/1200Wx1200H?use=banner&assetDescr=ES-580W_S02_multiple%20paper-1'}} 
+            
+            textStyle={styles.Black}
+          />
+          <CardTitle 
+            title="Video Tutorial - ES-580W " 
+            subtitle="Scanner"
+          />
+          <CardContent text="Epson looks into the details and designs equipment for a seamless workflow, like the innovative WorkForce ES-580W. Paired with the Epson Smart Panel app, users can scan and share documents with their workgroup on their mobile devices, enhancing productivity.
+" />
+          <CardAction 
+            separator={true} 
+            inColumn={false}>
+            <CardButton
+              onPress={() => navigation.navigate('Detail')}
+              title="View"
+              color="blue"
+            />
+
+          </CardAction>
+        </Card>
+        </VStack>
+      </ScrollView>
+      </NativeBaseProvider>
+  ); 
+};
+
+const styles = StyleSheet.create({
+  Purple: {
+    
+    // Define your HEX color code here.
+    color: '#9C27B0',
+    
+  },
+  Red: {
+    
+    // Define your HEX color code here.
+    color: '#F44336'
+    
+  },
+  
+  Black:{
+    
+    // Define your HEX color code here.
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+         textShadowOffset: {width: 0, height: 1},
+         textShadowRadius: 1,
+    color : '#000',
+    
+  }
+});
+export default Home

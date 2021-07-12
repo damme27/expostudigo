@@ -1,0 +1,91 @@
+
+import { Button, Center, Heading, NativeBaseProvider, Stack, Text, TouchableOpacity, View } from "native-base"
+import React, { useRef, useState } from "react";
+
+import Constants from 'expo-constants';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import PhoneInput from "react-native-phone-number-input";
+import firebase from "firebase";
+import styles from "../lib/styles/style";
+
+const PhoneLogin = ({  }) =>{
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [code, setCode] = useState('');
+  const [verificationId, setVerificationId] = useState(null);
+  const recaptchaVerifier = useRef(null);
+  const phoneInput = useRef(null);
+
+  const sendVerification = () => {
+    const phoneProvider = new firebase.auth.PhoneAuthProvider();
+    phoneProvider
+      .verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
+      .then(setVerificationId);
+  };
+
+  const confirmCode = () => {
+    const credential = firebase.auth.PhoneAuthProvider.credential(
+      verificationId,
+      code
+    );
+    firebase
+      .auth()
+      .signInWithCredential(credential)
+      .then((result) => {
+        console.log(result);
+      });
+  };
+
+  return (
+    <NativeBaseProvider>
+      <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebase}
+        />  
+      <Center flex={1}>
+      <Stack p={4} space={2}>
+        <Stack space={2}>
+          <Heading 
+          size="md" 
+          color= "blue.600"
+          ml={-1}
+          // _light={{
+          //   color: "blue.700",
+          // }}
+          // _dark={{
+          //   color: "blue.700",
+          // }}
+          >
+            Verify Your Number
+          </Heading>
+          <Heading
+            size="xs"
+            fontWeight="500"
+            ml={-0.5}
+            mt={-1}
+          >
+            Please enter your Country & your phone number
+          </Heading>
+        </Stack>
+      </Stack>
+
+      <PhoneInput
+            ref={phoneInput}
+            defaultValue={phoneNumber}
+            defaultCode="ID"
+            layout="first"
+            onChangeText={(text) => {
+              setPhoneNumber(text);
+            }}
+          />
+        <Button 
+        width="80%"
+        my="12"
+        bg="blue.600"
+        onPress={() => sendVerification}>Send</Button>
+      </Center>
+    </NativeBaseProvider>
+  );
+};
+
+export default PhoneLogin
