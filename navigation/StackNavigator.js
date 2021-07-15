@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 
 import About from '../screens/About';
 import Category from '../screens/SubCategory';
+import Chat from '../screens/Chat';
 import DetailSalesKit from '../screens/Scrap/DetailSalesKit';
 import Glossary from '../screens/Glossary';
 import Home from '../screens/Home';
@@ -20,7 +21,15 @@ const Stack = createStackNavigator();
 const MainStackNavigator = () => {
   return (
     <Stack.Navigator
-      // headerMode="none"
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: '#164194',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }}
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="SalesKit" component={SalesKit} />
@@ -32,6 +41,7 @@ const MainStackNavigator = () => {
       <Stack.Screen name="ProductDetail" component={ProductDetail} />
       <Stack.Screen name="DetailSalesKit" component={DetailSalesKit}/>
       <Stack.Screen name="Category" component={Category} options={{ title: 'List Category' }}/>
+      <Stack.Screen name="Chat" component={Chat}/>
     </Stack.Navigator>
   );
 }

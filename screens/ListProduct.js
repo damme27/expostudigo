@@ -14,26 +14,50 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 
 import { TouchableOpacity } from "react-native";
-import firebase from "firebase";
+import firebase from "../firebase";
 
-const ListProduct = ({ navigation }) => {
+const ListProduct = ({ navigation, route }) => {
 
-  const [data, setData] = useState([]);
-
-  const ref = firebase.firestore().collection("schools");
+  const {params_ct} = route.params;
+  const var_filter = JSON.stringify(params_ct)
   
+  const [datas, setDatas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const ref = firebase.firestore().collection("saleskit").where("filter", "==",params_ct);
+  
+  //REALTIME GET FUNCTION
+  function getData() {
+    setLoading(true);
+    ref.onSnapshot((querySnapshot) => {
+      const items = [];
+      querySnapshot.forEach((doc) => {
+        items.push(doc.data());
+      });
+      setDatas(items);
+      setLoading(false);
+    });
+  }
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <NativeBaseProvider>
       <ScrollView>
         <Center>
+          {params_ct}
           <SimpleGrid columns={2} spacingX={0} mt={5} width="80%">
-            {/* L15150 */}
+             {/* L15150 */}
+            {datas.map((data) => (
+           
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("DetailSalesKit", { Product: "L15150" });
+                navigation.navigate("DetailSalesKit", { MediaID: data.mediaid });
               }}
             >
               <Box
@@ -47,7 +71,7 @@ const ListProduct = ({ navigation }) => {
               >
                 <Image
                   source={{
-                    uri: "https://mediaserver.goepson.com/ImConvServlet/imconv/4ea49e6dd23310d939582e94b75bd239f3311978/1200Wx1200H?use=banner&assetDescr=19Cah_FDL_Black_01_2",
+                    uri: data.url,
                   }}
                   alt="image base"
                   resizeMode="contain"
@@ -67,54 +91,14 @@ const ListProduct = ({ navigation }) => {
                     size={["md", "lg", "md"]}
                     noOfLines={2}
                   >
-                    L15150
+                    {data.title}
                   </Heading>
                 </Stack>
               </Box>
+             
             </TouchableOpacity>
-
-            {/* M3170 */}
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("DetailSalesKit", { Product: "M3170" });
-              }}
-            >
-              <Box
-                bg="white"
-                ml={-3}
-                mb={4}
-                shadow={2}
-                rounded="lg"
-                minWidth="65%"
-                maxWidth="80%"
-              >
-                <Image
-                  source={{
-                    uri: "https://mediaserver.goepson.com/ImConvServlet/imconv/f1e6cc610c3a48c0181554e65479cab5fa798d14/1200Wx1200H?use=banner&assetDescr=M3170-2",
-                  }}
-                  alt="image base"
-                  resizeMode="contain"
-                  height={150}
-                  roundedTop="md"
-                />
-                <Text
-                  bold
-                  position="absolute"
-                  color="white"
-                  top={0}
-                  m={[4, 4, 8]}
-                ></Text>
-                <Stack space={4} p={[4, 4, 8]}>
-                  <Heading
-                    textAlign={["center"]}
-                    size={["md", "lg", "md"]}
-                    noOfLines={2}
-                  >
-                    M3170
-                  </Heading>
-                </Stack>
-              </Box>
-            </TouchableOpacity>
+            ))}
+            
           </SimpleGrid>
         </Center>
       </ScrollView>

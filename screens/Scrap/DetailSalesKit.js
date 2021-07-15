@@ -14,33 +14,61 @@ import {
     Text,
     VStack
 } from "native-base";
-import React, { Component, useState } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 
-import ImageView from "react-native-image-viewing";
-import { TouchableOpacity } from "react-native";
-import { View } from "native-base";
+import firebase from "../../firebase";
 
 const DetailSalesKit = ({route}) =>{
-    const {Product} = route.params;
-   
+    const {MediaID} = route.params;
+
+    const [datas, setDatas] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const ref = firebase.firestore().collection("media").where("mediaid", "==", MediaID);
+  
+  //REALTIME GET FUNCTION
+  function getData() {
+    setLoading(true);
+    ref.onSnapshot((querySnapshot) => {
+      const items = [];
+      querySnapshot.forEach((doc) => {
+        items.push(doc.data());
+      });
+      setDatas(items);
+      setLoading(false);
+    });
+  }
+
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line
+  }, []);
+
+
     return(
         <NativeBaseProvider>
         <ScrollView mt={5}>
             
             <Center>
-           
+            {MediaID}
+
+            {datas.map((data) => (
+
             <Box shadow={2}
                  rounded="md" width="85%" my={4}>
             <AspectRatio ratio={9/16} width="100%">
                 <Image
                     resizeMode="cover"
                     source={{
-                    uri: JSON.stringify(Product) == '"M3170"' ? 'https://raw.githubusercontent.com/damme27/Testing_blogapp/master/assets/Slide1.JPG':'https://raw.githubusercontent.com/damme27/Testing_blogapp/master/assets/Slide2.JPG',
+                    uri: data.url,
                     }}
                 />
             </AspectRatio>
             </Box>
+              ))}     
             </Center>
+
+                 
+            
         </ScrollView>
     </NativeBaseProvider>
     );

@@ -77,7 +77,7 @@ const Home = ({ navigation }) => {
 
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("Category", { CT: "Scanner" });
+                navigation.navigate("Category", { CT: "scanner" });
               }}
             >
               <Box

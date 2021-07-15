@@ -1,6 +1,7 @@
 import { Button, Center, HStack, Heading, Input, NativeBaseProvider, Stack, Text, TouchableOpacity, View } from "native-base"
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from 'expo-constants';
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -10,11 +11,13 @@ import styles from "../lib/styles/style";
 
 const PhoneLogin = ({ navigation }) =>{
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [username, setusername] = useState('');
   const [formattedValue, setFormattedValue] = useState("");
   const [code, setCode] = useState('');
   const [verificationId, setVerificationId] = useState(null);
   const recaptchaVerifier = useRef(null);
   const phoneInput = useRef(null);
+  const [loading, setLoading] = useState(false);
   const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
 
   const sendVerification = () => {
@@ -22,6 +25,27 @@ const PhoneLogin = ({ navigation }) =>{
     phoneProvider
       .verifyPhoneNumber(formattedValue, recaptchaVerifier.current)
       .then(setVerificationId);
+  };
+
+  const checkNumber = () => {
+    const db = firebase.firestore().collection("phonenumber").where("number","==",formattedValue);
+    
+    setLoading(true);
+    db.onSnapshot((querySnapshot) => {
+      if (querySnapshot.exists) {
+        alert("User does not exist anymore.")
+        return;
+      }
+
+      const items = [];
+      querySnapshot.forEach((doc) => {
+        items.push(doc.data());
+        console.log('User data: ', doc.data());
+      });
+      setusername(items);
+      
+      setLoading(false);
+    });
   };
 
   const confirmCode = () => {
@@ -36,6 +60,11 @@ const PhoneLogin = ({ navigation }) =>{
         console.log(result);
       });
   };
+
+  useEffect(() => {
+    checkNumber();
+
+  }, []);
 
   return (
     <NativeBaseProvider>
@@ -57,7 +86,7 @@ const PhoneLogin = ({ navigation }) =>{
           //   color: "blue.700",
           // }}
           >
-            Verify Your Number
+            Verify Your Number {username.username}
           </Heading>
           <Heading
             size="xs"
@@ -87,7 +116,7 @@ const PhoneLogin = ({ navigation }) =>{
         width="80%"
         my="12"
         bg="blue.600"
-        onPress={sendVerification}>Send</Button>
+        onPress={checkNumber}>Send</Button>
 
       <Stack p={4} space={2}>
         <Stack space={2} alignItems="center">
@@ -127,7 +156,7 @@ const PhoneLogin = ({ navigation }) =>{
         width="80%"
         my="12"
         bg="blue.600"
-        onPress={() => navigation.navigate('MainStack')}>Confirm</Button>
+        onPress={checkNumber}>Confirm</Button>
 
       </Center>
     </NativeBaseProvider>
